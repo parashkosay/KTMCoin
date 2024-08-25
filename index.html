@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coin Tap Game</title>
+    <style>
+        /* Reset some default styles */
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            overflow: hidden; /* Prevent scrolling */
+            touch-action: manipulation; /* Prevent zooming on touch devices */
+        }
+
+        /* Main container styling */
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background-color: #f0f0f0;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        /* Header styling */
+        header {
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(45deg, #ff6b6b, #f7d794);
+            border-radius: 0 0 30px 30px;
+            width: 100%;
+            box-sizing: border-box;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .avatar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .avatar img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+        }
+
+        #username {
+            font-size: 18px;
+            margin-top: 10px;
+            color: #fff;
+        }
+
+        /* Title styling */
+        .title {
+            font-size: 28px;
+            font-weight: bold;
+            color: blue;
+        }
+
+        /* Stats section styling */
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            margin: 15px;
+            width: 90%;
+            box-sizing: border-box;
+        }
+
+        .stats-item {
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(135deg, #f7d794, #ff6b6b);
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+            width: 30%;
+            box-sizing: border-box;
+        }
+
+        .stats-item:hover {
+            transform: scale(1.05);
+        }
+
+        .label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stats-item div {
+            font-size: 20px;
+        }
+
+        /* Coin section styling */
+        .coin-section {
+            text-align: center;
+            padding: 20px;
+            flex-grow: 1;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .coin-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .dollar-symbol {
+            width: 30px;
+            margin-right: 10px;
+        }
+
+        #coin-count {
+            font-size: 48px;
+            font-weight: bold;
+            color: #ff6b6b;
+        }
+
+        .coin {
+            width: 150px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .coin:active {
+            transform: scale(1.1);
+        }
+
+        #tap-feedback {
+            font-size: 24px;
+            color: #ff6b6b;
+            visibility: hidden;
+            transition: opacity 0.2s ease;
+        }
+
+        /* Buttons styling */
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .button img {
+            width: 100px;
+            height: 100px;
+        }
+
+        .button div {
+            font-size: 18px;
+            margin-top: 5px;
+            color: #333;
+        }
+
+        /* Navbar styling */
+        .navbar {
+            display: flex;
+            justify-content: space-around;
+            background: #ff6b6b;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.2);
+            box-sizing: border-box;
+        }
+
+        .navbar a {
+            text-align: center;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .navbar img {
+            width: 24px;
+            height: 24px;
+        }
+
+        .navbar div {
+            font-size: 12px;
+        }
+
+        /* Modal styling */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 90%;
+            max-height: 90%;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-content img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 24px;
+            color: #000;
+        }
+
+        .task {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .task-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+        }
+
+        .card {
+            cursor: pointer;
+            display: inline-block;
+            margin: 10px;
+            text-align: center;
+        }
+
+        .card img {
+            width: 100px;
+            height: 100px;
+        }
+    </style>
+</head>
+<body background-image: url('bg.jpg');>
+    <div class="container">
+        <header>
+            <div class="avatar">
+                <img src="avatar.png" alt="Avatar">
+                <div id="username">CEO</div>
+            </div>
+            <div class="title">NRSCOIN</div>
+        </header>
+        
+        <div class="stats">
+            <div class="stats-item">
+                <div class="label">Profit per Tap</div>
+                <div id="profit-per-tap">0.01</div>
+            </div>
+            <div class="stats-item">
+                <div class="label">Level</div>
+                <div id="next-level">1</div>
+            </div>
+            <div class="stats-item">
+                <div class="label">Profit per Hour</div>
+                <div id="profit-per-hour">0.00</div>
+            </div>
+        </div>
+        
+        <div class="coin-section">
+            <div class="coin-container">
+                <img src="nepaliru.png" alt="Dollar Symbol" class="dollar-symbol">
+                <div id="coin-count">0.000</div>
+            </div>
+            <img src="coin.png" alt="Coin" class="coin" id="coin">
+            <div id="tap-feedback"></div>
+            <div class="buttons">
+                <div class="button" id="boost-button">
+                    <img src="boost.png" alt="Boost">
+                    <div>Boost</div>
+                </div>
+                <div class="button" id="spin-button">
+                    <img src="spin.png" alt="Spin">
+                    <div>Spin</div>
+                </div>
+            </div>
+        </div>
+        
+        <nav class="navbar">
+            <a href="#" id="tasks-button">
+                <img src="tasks.png" alt="Tasks">
+                <div>Tasks</div>
+            </a>
+            <a href="#" id="friends-button">
+                <img src="friends.png" alt="Friends">
+                <div>Friends</div>
+            </a>
+            <a href="#" id="improve-button">
+                <img src="improve.png" alt="Improve">
+                <div>Improve</div>
+            </a>
+            <a href="#" id="wallet-button">
+                <img src="wallet.png" alt="Wallet">
+                <div>Wallet</div>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Wallet Modal -->
+    <div class="modal" id="wallet-modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('wallet-modal')">&times;</span>
+            <h2>Wallet</h2>
+            <div>Total Coins: <span id="total-coins">0.000</span></div>
+            <div>NRS: <span id="nrs">0.00</span></div>
+            <div class="buttons">
+                <div class="button" id="deposit-button">
+                    <img src="deposit.png" alt="Deposit">
+                    <div>Deposit</div>
+                </div>
+                <div class="button" id="withdraw-button">
+                    <img src="withdraw.png" alt="Withdraw">
+                    <div>Withdraw</div>
+                </div>
+                <div class="button" id="swap-button">
+                    <img src="swap.png" alt="Swap">
+                    <div>Swap</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deposit Modal -->
+    <div class="modal" id="deposit-modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('deposit-modal')">&times;</span>
+            <h2>Deposit</h2>
+            <img src="qr-code.jpg" alt="QR Code">
+            <p>Scan the QR code to deposit funds.</p>
+            <p>Rules: Minimum deposit amount is $1(NRS.135)</p>
+            <button id="verify-deposit-button">Verify</button>
+            <input type="file" id="deposit-upload" style="display: none;">
+        </div>
+    </div>
+
+    <!-- Withdraw Modal -->
+    <div class="modal" id="withdraw-modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('withdraw-modal')">&times;</span>
+            <h2>Withdraw</h2>
+            <p>Minimum of NRS 100 is required to withdraw.</p>
+        </div>
+    </div>
+
+    <!-- Swap Modal -->
+    <div class="modal" id="swap-modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('swap-modal')">&times;</span>
+            <h2>Swap</h2>
+            <div>
+                <label for="coins-to-swap">Coins to Swap:</label>
+                <input type="number" id="coins-to-swap" min="0" step="0.01" value="0">
+            </div>
+            <div>
+                <label for="nrs-received">NRS Received:</label>
+                <input type="number" id="nrs-received" readonly>
+            </div>
+            <button id="execute-swap">Swap</button>
+        </div>
+    </div>
+
+    <!-- Tasks Modal -->
+    <div class="modal" id="tasks-modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('tasks-modal')">&times;</span>
+            <h2>Tasks</h2>
+            <div class="task">
+                <img src="youtube-icon.png" alt="YouTube" class="task-icon">
+              <p>Subscribe to  <a href="https://www.https://www.youtube.com/@yt_vdos" target="_blank">YouTube</a></p>
+            </div>
+            <div class="task">
+                <img src="instagram-icon.jpg" alt="Instagram" class="task-icon">
+              <p> Follow on <a href="https://www.instagram.com/YOUR_PROFILE" target="_blank"> Instagram</a></p>
+            </div>
+            <div class="task">
+                <img src="tiktok-icon.jpg" alt="TikTok" class="task-icon">
+               <p> Follow on  <a href="https://www.tiktok.com/@YOUR_PROFILE" target="_blank">TikTok</a>  </p>
+            </div>
+            <div class="task">
+                <img src="facebook-icon.jpg" alt="Facebook" class="task-icon">
+               <p>Like on <a href="https://www.facebook.com/YOUR_PROFILE" target="_blank">Facebook</a></p>
+            </div>
+            <div class="task">
+                <img src="twitter-icon.png" alt="Twitter" class="task-icon">
+                <p>Follow on<a href="https://twitter.com/YOUR_PROFILE" target="_blank"> Twitter</a></p>
+            </div>
+            <div class="task">
+                <img src="telegram-icon.jpg" alt="Telegram" class="task-icon">
+                <p>Join <a href="https://t.me/YOUR_CHANNEL" target="_blank"> Telegram</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Friends Modal -->
+    <div class="modal" id="friends-modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('friends-modal')">&times;</span>
+            <h2>Friends</h2>
+            <p>Invite friends to join and earn rewards!</p>
+            <p>Share this link: <a href="https://your-share-link.com" target="_blank">Invite Link</a></p>
+            <p>If friends join, you get 200 coins and they get 500 coins!</p>
+        </div>
+    </div>
+
+    <!-- Improve Modal -->
+    <div class="modal" id="improve-modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('improve-modal')">&times;</span>
+            <h2>Improve</h2>
+            <div class="card" data-cost="20000" data-pph="5">
+                <img src="card1.jpg" alt="Card 1">
+                <p>Balen Shah: 20,000 coins = 5 PPH</p>
+            </div>
+            <div class="card" data-cost="30000" data-pph="10">
+                <img src="card2.jpg" alt="Card 2">
+                <p>KP Oli: 30,000 coins = 10 PPH</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize variables
+        let coinCount = 0;
+        let level = 1;
+        let pph = 0; // Profit per Hour
+
+        // Elements
+        const coinElement = document.getElementById('coin');
+        const coinCountElement = document.getElementById('coin-count');
+        const tapFeedback = document.getElementById('tap-feedback');
+        const levelElement = document.getElementById('next-level');
+        const totalCoinsElement = document.getElementById('total-coins');
+        const nrsElement = document.getElementById('nrs');
+        const coinsToSwapElement = document.getElementById('coins-to-swap');
+        const nrsReceivedElement = document.getElementById('nrs-received');
+
+        // Update coin count and level
+        function updateStats() {
+            coinCountElement.textContent = coinCount.toFixed(3);
+            totalCoinsElement.textContent = coinCount.toFixed(3);
+            const newLevel = Math.floor(coinCount / 5000) + 1;
+            if (newLevel > level) {
+                level = newLevel;
+                levelElement.textContent = level;
+            }
+        }
+
+        // Handle coin click
+        coinElement.addEventListener('click', () => {
+            coinCount += 0.01;
+            updateStats();
+
+            tapFeedback.textContent = '+0.01';
+            tapFeedback.style.visibility = 'visible';
+            tapFeedback.style.opacity = '1';
+
+            setTimeout(() => {
+                tapFeedback.style.opacity = '0';
+            }, 500);
+        });
+
+        // Handle wallet actions
+        document.getElementById('wallet-button').addEventListener('click', () => {
+            document.getElementById('wallet-modal').style.display = 'flex';
+        });
+
+        document.getElementById('deposit-button').addEventListener('click', () => {
+            document.getElementById('deposit-modal').style.display = 'flex';
+        });
+
+        document.getElementById('withdraw-button').addEventListener('click', () => {
+            document.getElementById('withdraw-modal').style.display = 'flex';
+        });
+
+        document.getElementById('swap-button').addEventListener('click', () => {
+            document.getElementById('swap-modal').style.display = 'flex';
+        });
+
+        // Handle deposit verification
+        document.getElementById('verify-deposit-button').addEventListener('click', () => {
+            document.getElementById('deposit-upload').click();
+        });
+
+        document.getElementById('deposit-upload').addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                // Handle file upload and send email (replace with actual implementation)
+                alert('Deposit verification photo uploaded.');
+            }
+        });
+
+        // Handle withdraw
+        document.getElementById('withdraw-modal').addEventListener('submit', () => {
+            alert('Withdrawal request sent. Details will be sent to parashkarki782@gmail.com.');
+        });
+
+        // Handle swap
+        document.getElementById('coins-to-swap').addEventListener('input', () => {
+            const coinsToSwap = parseFloat(document.getElementById('coins-to-swap').value);
+            const nrsReceived = coinsToSwap / 1000;
+            document.getElementById('nrs-received').value = nrsReceived.toFixed(2);
+        });
+
+        document.getElementById('execute-swap').addEventListener('click', () => {
+            const coinsToSwap = parseFloat(document.getElementById('coins-to-swap').value);
+            const nrsReceived = parseFloat(document.getElementById('nrs-received').value);
+            if (coinsToSwap > coinCount) {
+                alert('Insufficient coins for swap.');
+                return;
+            }
+            coinCount -= coinsToSwap;
+            nrsElement.textContent = (parseFloat(nrsElement.textContent) + nrsReceived).toFixed(2);
+            updateStats();
+            document.getElementById('swap-modal').style.display = 'none';
+        });
+
+        // Handle task modal
+        document.getElementById('tasks-button').addEventListener('click', () => {
+            document.getElementById('tasks-modal').style.display = 'flex';
+        });
+
+        // Handle friends modal
+        document.getElementById('friends-button').addEventListener('click', () => {
+            document.getElementById('friends-modal').style.display = 'flex';
+        });
+
+        // Handle improve modal
+        document.getElementById('improve-button').addEventListener('click', () => {
+            document.getElementById('improve-modal').style.display = 'flex';
+        });
+
+        // Close modals
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        // Handle card purchases and increase PPH
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('click', () => {
+                const cardCost = parseFloat(card.getAttribute('data-cost'));
+                const cardPPH = parseFloat(card.getAttribute('data-pph'));
+                if (coinCount >= cardCost) {
+                    coinCount -= cardCost;
+                    pph += cardPPH;
+                    totalCoinsElement.textContent = coinCount.toFixed(3);
+                    document.getElementById('profit-per-hour').textContent = pph.toFixed(2);
+                } else {
+                    alert('Insufficient coins to buy this card.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
